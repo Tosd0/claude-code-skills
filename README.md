@@ -4,16 +4,10 @@ A collection of open-source skills for [Claude Code](https://claude.com/claude-c
 
 ## Quick Start
 
-Copy the following to your AI assistant to install all skills:
+Copy the following to your AI assistant:
 
 ```
-请帮我安装 Claude Code Skills：
-1. git clone https://github.com/lldxflwb/claude-code-skills.git /tmp/claude-code-skills
-2. mkdir -p ~/.claude/skills
-3. cp -r /tmp/claude-code-skills/skills/* ~/.claude/skills/
-4. rm -rf /tmp/claude-code-skills
-5. ls ~/.claude/skills/ && echo "安装成功"
-每个 skill 可能有额外依赖，请检查对应目录下的 SKILL.md。
+请阅读 https://github.com/lldxflwb/claude-code-skills 帮我安装里面的 skills
 ```
 
 ## Skills
