@@ -76,14 +76,9 @@ Compilation errors are printed to stderr. Read the error, fix the `.tex` file, r
 
 ## Prerequisites
 
-Before first use, check and install dependencies:
-
-```bash
-which tectonic || brew install tectonic
-which pdf2svg || brew install pdf2svg
-```
-
-If `brew` is behind a proxy, use the user's proxy alias (e.g. `pbrew`). See [setup.md](setup.md) for details.
+Before first use, read [setup.md](setup.md) and follow both steps:
+1. Install dependencies (tectonic + pdf2svg)
+2. Ask the user if they want to configure host, port, or default view mode
 
 ## Server Management
 
