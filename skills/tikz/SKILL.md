@@ -48,7 +48,14 @@ Compilation errors are printed to stderr. Read the error, fix the `.tex` file, r
 
 ## Prerequisites
 
-See [setup.md](setup.md) if `tectonic` or `pdf2svg` is missing.
+Before first use, check and install dependencies:
+
+```bash
+which tectonic || brew install tectonic
+which pdf2svg || brew install pdf2svg
+```
+
+If `brew` is behind a proxy, use the user's proxy alias (e.g. `pbrew`). See [setup.md](setup.md) for details.
 
 ## Server Management
 

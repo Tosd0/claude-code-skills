@@ -19,16 +19,24 @@ Copy the following to your AI assistant:
 
 ## Installation
 
-Copy the skill directory to your Claude Code skills folder:
+Copy or symlink the skill directory to your Claude Code skills folder:
 
 ```bash
-# Install a single skill
-cp -r skills/codex ~/.claude/skills/codex
+# Install a single skill (symlink recommended)
+ln -s /path/to/skills/codex ~/.claude/skills/codex
+ln -s /path/to/skills/tikz ~/.claude/skills/tikz
 ```
 
-## Prerequisites
+After installing, check each skill's `setup.md` for dependencies and install them:
 
-Each skill may have its own prerequisites. Check the `SKILL.md` file in each skill directory for details.
+```bash
+# tikz skill dependencies (macOS)
+which tectonic || brew install tectonic
+which pdf2svg || brew install pdf2svg
+
+# codex skill dependencies
+which codex || npm install -g @anthropic-ai/codex
+```
 
 ## Contributing
 
