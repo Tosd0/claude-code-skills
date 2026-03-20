@@ -26,10 +26,52 @@ class TikZHandler(SimpleHTTPRequestHandler):
             self._serve_json(200, {"status": "ok"})
         elif self.path == "/":
             self._serve_index()
+        elif self.path == "/settings":
+            self._serve_settings()
+        elif self.path.startswith("/api/config"):
+            self._api_config_get()
+        elif self.path.startswith("/api/mtime"):
+            self._api_mtime()
         elif self.path.startswith("/plans/"):
             self._serve_plan()
         else:
             super().do_GET()
+
+    def do_POST(self):
+        if self.path == "/api/config":
+            self._api_config_post()
+        else:
+            self.send_error(405)
+
+    def _api_config_get(self):
+        from config import get_all_config
+        self._serve_json(200, get_all_config())
+
+    def _api_config_post(self):
+        from config import save_config, get_all_config
+        length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(length)
+        try:
+            data = json.loads(body)
+            save_config(data)
+            self._serve_json(200, get_all_config())
+        except Exception as e:
+            self._serve_json(400, {"error": str(e)})
+
+    def _api_mtime(self):
+        qs = urllib.parse.urlparse(self.path).query
+        params = urllib.parse.parse_qs(qs)
+        file_path = params.get("file", [""])[0]
+        mtime = 0
+        if file_path.startswith("plans/"):
+            p = PLANS_DIR / file_path[len("plans/"):]
+            if p.exists():
+                mtime = p.stat().st_mtime
+        elif file_path:
+            p = RENDERS_DIR / file_path
+            if p.exists():
+                mtime = p.stat().st_mtime
+        self._serve_json(200, {"mtime": mtime})
 
     def _serve_json(self, code, data):
         body = json.dumps(data).encode()
@@ -144,6 +186,28 @@ body.normal .toc-fab:hover {{ background: #1d4ed8; }}
 .toc-sidebar li.active a {{ color: #2563eb; font-weight: 600; }}
 .toc-overlay {{ display: none; position: fixed; inset: 0; z-index: 98; }}
 .toc-overlay.open {{ display: block; }}
+
+/* PDF export button */
+.pdf-fab {{ display: none; }}
+body.normal .pdf-fab {{ display: flex; width: 3rem; height: 3rem;
+  border-radius: 50%; background: #16a34a; color: #fff; border: none; cursor: pointer;
+  align-items: center; justify-content: center; font-size: .75rem; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2); transition: background .2s; letter-spacing: .05em; }}
+body.normal .pdf-fab:hover {{ background: #15803d; }}
+
+/* Print styles */
+@media print {{
+  .topbar, .fab-group, .toc-sidebar, .toc-overlay {{ display: none !important; }}
+  body, body.normal {{ height: auto; overflow: visible; background: #fff; margin: 0; }}
+  .reader {{ overflow: visible; display: block; }}
+  .page-content {{ max-width: 100%; padding: 0; overflow: visible; font-size: 12pt; line-height: 1.6; }}
+  .page-content pre {{ white-space: pre-wrap; word-break: break-all; border: 1px solid #ccc; }}
+  .page-content table {{ page-break-inside: auto; }}
+  .page-content tr {{ page-break-inside: avoid; }}
+  .page-content h1, .page-content h2, .page-content h3 {{ page-break-after: avoid; }}
+  .page-content pre, .page-content blockquote {{ page-break-inside: avoid; }}
+  .page-content img {{ max-width: 100%; page-break-inside: avoid; }}
+}}
 </style>
 </head><body>
 
@@ -164,6 +228,7 @@ body.normal .toc-fab:hover {{ background: #1d4ed8; }}
 </div>
 
 <div class="fab-group" id="fab-group">
+  <button class="pdf-fab" id="btn-pdf" title="导出 PDF">PDF</button>
   <button class="toc-fab" id="btn-top" title="回到顶部">&#8679;</button>
   <button class="toc-fab" id="btn-bottom" title="去到底部">&#8681;</button>
   <button class="toc-fab" id="toc-fab" title="目录">&#9776;</button>
@@ -497,6 +562,7 @@ function highlightToc() {{
 
 document.getElementById('btn-top').addEventListener('click', () => window.scrollTo({{ top: 0, behavior: 'smooth' }}));
 document.getElementById('btn-bottom').addEventListener('click', () => window.scrollTo({{ top: document.body.scrollHeight, behavior: 'smooth' }}));
+document.getElementById('btn-pdf').addEventListener('click', () => window.print());
 tocFab.addEventListener('click', () => tocSidebar.classList.contains('open') ? closeToc() : openToc());
 tocClose.addEventListener('click', closeToc);
 tocOverlay.addEventListener('click', closeToc);
@@ -511,6 +577,190 @@ applyMode = function() {{
   if (mode === 'normal') buildToc();
 }};
 applyMode();
+
+// Auto-refresh: poll server for file changes
+let refreshTimer = null;
+let lastMtime = 0;
+const planFile = 'plans/' + location.pathname.split('/plans/')[1];
+
+function startAutoRefresh() {{
+  fetch('/api/config').then(r => r.json()).then(cfg => {{
+    const refreshMode = localStorage.getItem('auto_refresh') || cfg.auto_refresh || 'eink-off';
+    const interval = parseInt(localStorage.getItem('refresh_interval') || cfg.refresh_interval || 3) * 1000;
+
+    if (refreshTimer) clearInterval(refreshTimer);
+    if (refreshMode === 'off') return;
+    if (refreshMode === 'eink-off' && mode === 'eink') return;
+
+    // Get initial mtime
+    fetch('/api/mtime?file=' + encodeURIComponent(planFile))
+      .then(r => r.json()).then(d => {{ lastMtime = d.mtime; }});
+
+    refreshTimer = setInterval(() => {{
+      fetch('/api/mtime?file=' + encodeURIComponent(planFile))
+        .then(r => r.json()).then(d => {{
+          if (lastMtime > 0 && d.mtime > lastMtime) {{
+            location.reload();
+          }}
+          lastMtime = d.mtime;
+        }}).catch(() => {{}});
+    }}, interval);
+  }}).catch(() => {{}});
+}}
+startAutoRefresh();
+</script>
+</body></html>"""
+
+        body = html.encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _serve_settings(self):
+        html = """<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>设置</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; color: #333; }
+.container { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+h1 { margin-bottom: 1.5rem; }
+.back { display: inline-block; margin-bottom: 1rem; color: #2563eb; text-decoration: none; font-size: .9rem; }
+.back:hover { text-decoration: underline; }
+.card { background: #fff; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+.card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #333; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: .9rem; font-weight: 600; margin-bottom: .3rem; color: #555; }
+.field .hint { font-size: .8rem; color: #888; margin-top: .2rem; }
+.field input, .field select { width: 100%; padding: .5rem; border: 1px solid #ddd; border-radius: 4px;
+  font-size: .95rem; }
+.field input:focus, .field select:focus { outline: none; border-color: #2563eb; }
+.btn { background: #2563eb; color: #fff; border: none; padding: .6rem 1.5rem; border-radius: 4px;
+  font-size: .95rem; cursor: pointer; }
+.btn:hover { background: #1d4ed8; }
+.btn-secondary { background: #6b7280; margin-left: .5rem; }
+.btn-secondary:hover { background: #4b5563; }
+.status { margin-top: 1rem; font-size: .9rem; color: #16a34a; display: none; }
+.actions { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; }
+.divider { border: none; border-top: 1px solid #eee; margin: 1rem 0; }
+</style>
+</head><body>
+<div class="container">
+<a class="back" href="/">&larr; 首页</a>
+<h1>设置</h1>
+
+<div class="card">
+  <h2>服务器配置</h2>
+  <div class="field">
+    <label>展示地址 (Host)</label>
+    <input type="text" id="cfg-host" placeholder="127.0.0.1">
+    <div class="hint">用于生成预览 URL 的地址。服务器始终监听 0.0.0.0。修改后需重启服务生效。</div>
+  </div>
+  <div class="field">
+    <label>端口 (Port)</label>
+    <input type="number" id="cfg-port" placeholder="8073">
+    <div class="hint">预览服务监听端口。修改后需重启服务生效。</div>
+  </div>
+  <hr class="divider">
+  <div class="field">
+    <label>默认阅读模式</label>
+    <select id="cfg-mode">
+      <option value="normal">普通模式</option>
+      <option value="eink">墨水屏模式</option>
+    </select>
+    <div class="hint">新用户首次打开时的默认模式。用户切换后会记住选择。</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>自动刷新</h2>
+  <div class="field">
+    <label>刷新模式</label>
+    <select id="cfg-refresh">
+      <option value="off">全部关闭</option>
+      <option value="on">全部开启</option>
+      <option value="eink-off">墨水屏关闭</option>
+    </select>
+    <div class="hint">off = 不自动刷新；on = 所有模式都刷新；eink-off = 仅普通模式刷新（推荐）</div>
+  </div>
+  <div class="field">
+    <label>刷新间隔（秒）</label>
+    <input type="number" id="cfg-interval" min="1" max="60" placeholder="3">
+    <div class="hint">检查文件变化的时间间隔</div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn" id="btn-save">保存</button>
+  <button class="btn btn-secondary" id="btn-reset">重置为默认</button>
+</div>
+<div class="status" id="status">已保存</div>
+
+</div>
+<script>
+const fields = {
+  host: document.getElementById('cfg-host'),
+  port: document.getElementById('cfg-port'),
+  default_view_mode: document.getElementById('cfg-mode'),
+  auto_refresh: document.getElementById('cfg-refresh'),
+  refresh_interval: document.getElementById('cfg-interval'),
+};
+const status = document.getElementById('status');
+
+function loadConfig() {
+  fetch('/api/config').then(r => r.json()).then(cfg => {
+    fields.host.value = cfg.host || '';
+    fields.port.value = cfg.port || '';
+    fields.default_view_mode.value = cfg.default_view_mode || 'normal';
+    fields.auto_refresh.value = cfg.auto_refresh || 'eink-off';
+    fields.refresh_interval.value = cfg.refresh_interval || 3;
+  });
+}
+
+function saveConfig() {
+  const data = {
+    host: fields.host.value,
+    port: parseInt(fields.port.value) || 8073,
+    default_view_mode: fields.default_view_mode.value,
+    auto_refresh: fields.auto_refresh.value,
+    refresh_interval: parseInt(fields.refresh_interval.value) || 3,
+  };
+  fetch('/api/config', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data),
+  }).then(r => r.json()).then(() => {
+    status.style.display = 'block';
+    status.textContent = '已保存';
+    setTimeout(() => status.style.display = 'none', 2000);
+  });
+}
+
+function resetConfig() {
+  fetch('/api/config', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      host: '127.0.0.1', port: 8073,
+      default_view_mode: 'normal',
+      auto_refresh: 'eink-off', refresh_interval: 3,
+    }),
+  }).then(() => {
+    loadConfig();
+    status.style.display = 'block';
+    status.textContent = '已重置为默认';
+    setTimeout(() => status.style.display = 'none', 2000);
+  });
+}
+
+document.getElementById('btn-save').addEventListener('click', saveConfig);
+document.getElementById('btn-reset').addEventListener('click', resetConfig);
+loadConfig();
 </script>
 </body></html>"""
 
@@ -593,7 +843,7 @@ a {{ color: #2563eb; text-decoration: none; }}
 a:hover {{ text-decoration: underline; }}
 </style>
 </head><body>
-<h1>预览服务</h1>
+<h1 style="display:flex;justify-content:space-between;align-items:center;">预览服务 <a href="/settings" style="font-size:.9rem;font-weight:400;">设置</a></h1>
 
 <h2>计划 ({len(list(PLANS_DIR.glob("*.md"))) if PLANS_DIR.exists() else 0})</h2>
 <div class="grid">{plan_cards}</div>
