@@ -1,0 +1,29 @@
+name: Track Clone Traffic
+
+on:
+  schedule:
+    - cron: "50 23 * * *" # 每天 UTC 23:50，接近日切时采集
+  workflow_dispatch: # 支持手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch traffic data & generate chart
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/update_traffic.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add traffic/clones.json traffic/clones.svg
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "chore: update clone traffic data [skip ci]"
+          git push

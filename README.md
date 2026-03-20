@@ -2,6 +2,10 @@
 
 A collection of open-source skills for [Claude Code](https://claude.com/claude-code).
 
+<picture>
+  <img src="traffic/clones.svg" alt="Clone Traffic">
+</picture>
+
 ## Quick Start
 
 Copy the following to your AI assistant:
@@ -15,6 +19,7 @@ Copy the following to your AI assistant:
 | Skill | Description |
 |-------|-------------|
 | [codex](skills/codex/) | Invoke Codex CLI from Claude Code to get a second opinion from GPT models. Supports session resume for multi-turn conversations. |
+| [codex-plan](skills/codex-plan/) | Automated adversarial plan review: Claude writes the plan, GPT challenges it, Claude evaluates and revises — loop until LGTM. |
 | [tikz](skills/tikz/) | TikZ diagram rendering with HTTP preview server. Write TikZ code, compile to SVG, view in browser. Includes a plan viewer with e-ink reading mode and pagination. |
 
 ## Installation
