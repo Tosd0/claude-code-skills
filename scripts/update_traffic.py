@@ -70,7 +70,7 @@ def generate_svg(history):
     count_points = " ".join(f"{x(i):.1f},{y(v):.1f}" for i, v in enumerate(counts))
     unique_points = " ".join(f"{x(i):.1f},{y(v):.1f}" for i, v in enumerate(uniques))
 
-    font = "font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
+    ff = "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"
 
     # Y-axis ticks (5 ticks)
     y_ticks = []
@@ -79,7 +79,7 @@ def generate_svg(history):
         yy = y(val)
         y_ticks.append(
             f'<text x="{pad_l - 8}" y="{yy + 4}" text-anchor="end" '
-            f'font-size="11" fill="#6b7280" style="{font}">{val}</text>'
+            f'font-size="11" fill="#6b7280" font-family="{ff}">{val}</text>'
             f'<line x1="{pad_l}" y1="{yy}" x2="{w - pad_r}" y2="{yy}" '
             f'stroke="#e5e7eb" stroke-width="1"/>'
         )
@@ -93,7 +93,7 @@ def generate_svg(history):
         xx = x(idx)
         x_labels.append(
             f'<text x="{xx}" y="{h - 8}" text-anchor="middle" '
-            f'font-size="11" fill="#6b7280" style="{font}">{label}</text>'
+            f'font-size="11" fill="#6b7280" font-family="{ff}">{label}</text>'
         )
 
     # Total stats
@@ -114,7 +114,7 @@ def generate_svg(history):
 <rect width="{w}" height="{h}" rx="8" fill="#fff"/>
 
 <!-- Title -->
-<text x="{pad_l}" y="20" font-size="14" font-weight="600" fill="#111" style="{font}">
+<text x="{pad_l}" y="20" font-size="14" font-weight="600" fill="#111" font-family="{ff}">
   Clone Traffic — Total: {total_clones} clones / {total_uniques} unique
 </text>
 
@@ -134,9 +134,9 @@ def generate_svg(history):
 
 <!-- Legend -->
 <circle cx="{w - 200}" cy="18" r="4" fill="#2563eb"/>
-<text x="{w - 192}" y="22" font-size="12" fill="#374151" style="{font}">Clones</text>
+<text x="{w - 192}" y="22" font-size="12" fill="#374151" font-family="{ff}">Clones</text>
 <circle cx="{w - 120}" cy="18" r="4" fill="#16a34a"/>
-<text x="{w - 112}" y="22" font-size="12" fill="#374151" style="{font}">Unique visitors</text>
+<text x="{w - 112}" y="22" font-size="12" fill="#374151" font-family="{ff}">Unique visitors</text>
 </svg>"""
 
     SVG_FILE.write_text(svg)

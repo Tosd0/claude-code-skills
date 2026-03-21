@@ -3,7 +3,7 @@
 A collection of open-source skills for [Claude Code](https://claude.com/claude-code).
 
 <picture>
-  <img src="traffic/clones.svg" alt="Clone Traffic">
+  <img src="https://raw.githubusercontent.com/lldxflwb/claude-code-skills/traffic-data/clones.svg" alt="Clone Traffic">
 </picture>
 
 ## Quick Start

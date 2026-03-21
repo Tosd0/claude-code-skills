@@ -14,16 +14,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore existing data from traffic-data branch
+        run: |
+          mkdir -p traffic
+          if git fetch origin traffic-data 2>/dev/null; then
+            git show origin/traffic-data:clones.json > traffic/clones.json 2>/dev/null || true
+          fi
+
       - name: Fetch traffic data & generate chart
         env:
           GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
         run: python3 scripts/update_traffic.py
 
-      - name: Commit if changed
+      - name: Push to traffic-data branch
         run: |
+          cp traffic/clones.json /tmp/clones.json
+          cp traffic/clones.svg /tmp/clones.svg
+
+          if git fetch origin traffic-data 2>/dev/null; then
+            git checkout traffic-data
+          else
+            git checkout --orphan traffic-data
+            git rm -rf .
+          fi
+
+          cp /tmp/clones.json clones.json
+          cp /tmp/clones.svg clones.svg
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add traffic/clones.json traffic/clones.svg
+          git add clones.json clones.svg
           git diff --cached --quiet && echo "No changes" && exit 0
-          git commit -m "chore: update clone traffic data [skip ci]"
-          git push
+          git commit -m "chore: update clone traffic data"
+          git push origin traffic-data
