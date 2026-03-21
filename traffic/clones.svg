@@ -1,16 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260">
-<style>
-  text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-</style>
 <rect width="720" height="260" rx="8" fill="#fff"/>
 
 <!-- Title -->
-<text x="45" y="20" font-size="14" font-weight="600" fill="#111">
+<text x="45" y="20" font-size="14" font-weight="600" fill="#111" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">
   Clone Traffic — Total: 103 clones / 72 unique
 </text>
 
 <!-- Grid -->
-<text x="37" y="214.0" text-anchor="end" font-size="11" fill="#6b7280">0</text><line x1="45" y1="210.0" x2="700" y2="210.0" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="166.63157894736844" text-anchor="end" font-size="11" fill="#6b7280">10</text><line x1="45" y1="162.63157894736844" x2="700" y2="162.63157894736844" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="124.0" text-anchor="end" font-size="11" fill="#6b7280">19</text><line x1="45" y1="120.0" x2="700" y2="120.0" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="81.36842105263159" text-anchor="end" font-size="11" fill="#6b7280">28</text><line x1="45" y1="77.36842105263159" x2="700" y2="77.36842105263159" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="34.0" text-anchor="end" font-size="11" fill="#6b7280">38</text><line x1="45" y1="30.0" x2="700" y2="30.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="37" y="214.0" text-anchor="end" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">0</text><line x1="45" y1="210.0" x2="700" y2="210.0" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="166.63157894736844" text-anchor="end" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">10</text><line x1="45" y1="162.63157894736844" x2="700" y2="162.63157894736844" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="124.0" text-anchor="end" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">19</text><line x1="45" y1="120.0" x2="700" y2="120.0" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="81.36842105263159" text-anchor="end" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">28</text><line x1="45" y1="77.36842105263159" x2="700" y2="77.36842105263159" stroke="#e5e7eb" stroke-width="1"/><text x="37" y="34.0" text-anchor="end" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">38</text><line x1="45" y1="30.0" x2="700" y2="30.0" stroke="#e5e7eb" stroke-width="1"/>
 
 <!-- Lines -->
 <polyline points="45.0,30.0 138.6,195.8 232.1,205.3 325.7,44.2 419.3,205.3 512.9,200.5 606.4,191.1 700.0,120.0" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round"/>
@@ -21,11 +18,11 @@
 <circle cx="45.0" cy="82.1" r="3" fill="#16a34a"/><circle cx="138.6" cy="195.8" r="3" fill="#16a34a"/><circle cx="232.1" cy="205.3" r="3" fill="#16a34a"/><circle cx="325.7" cy="105.8" r="3" fill="#16a34a"/><circle cx="419.3" cy="205.3" r="3" fill="#16a34a"/><circle cx="512.9" cy="200.5" r="3" fill="#16a34a"/><circle cx="606.4" cy="191.1" r="3" fill="#16a34a"/><circle cx="700.0" cy="153.2" r="3" fill="#16a34a"/>
 
 <!-- X labels -->
-<text x="45.0" y="252" text-anchor="middle" font-size="11" fill="#6b7280">03-13</text><text x="138.57142857142856" y="252" text-anchor="middle" font-size="11" fill="#6b7280">03-14</text><text x="325.7142857142857" y="252" text-anchor="middle" font-size="11" fill="#6b7280">03-16</text><text x="419.2857142857143" y="252" text-anchor="middle" font-size="11" fill="#6b7280">03-17</text><text x="606.4285714285714" y="252" text-anchor="middle" font-size="11" fill="#6b7280">03-19</text><text x="700.0" y="252" text-anchor="middle" font-size="11" fill="#6b7280">03-20</text>
+<text x="45.0" y="252" text-anchor="middle" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">03-13</text><text x="138.57142857142856" y="252" text-anchor="middle" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">03-14</text><text x="325.7142857142857" y="252" text-anchor="middle" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">03-16</text><text x="419.2857142857143" y="252" text-anchor="middle" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">03-17</text><text x="606.4285714285714" y="252" text-anchor="middle" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">03-19</text><text x="700.0" y="252" text-anchor="middle" font-size="11" fill="#6b7280" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">03-20</text>
 
 <!-- Legend -->
 <circle cx="520" cy="18" r="4" fill="#2563eb"/>
-<text x="528" y="22" font-size="12" fill="#374151">Clones</text>
+<text x="528" y="22" font-size="12" fill="#374151" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">Clones</text>
 <circle cx="600" cy="18" r="4" fill="#16a34a"/>
-<text x="608" y="22" font-size="12" fill="#374151">Unique visitors</text>
+<text x="608" y="22" font-size="12" fill="#374151" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">Unique visitors</text>
 </svg>
