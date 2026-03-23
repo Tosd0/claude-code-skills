@@ -1,0 +1,81 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{xeCJK}
+\setCJKmainfont{Hiragino Sans GB}
+\setCJKsansfont{Hiragino Sans GB}
+\usetikzlibrary{arrows.meta, positioning}
+
+\definecolor{userBg}{HTML}{F0F0F0}
+\definecolor{userBd}{HTML}{999999}
+\definecolor{aBg}{HTML}{E8F0FE}
+\definecolor{aBd}{HTML}{4285F4}
+\definecolor{bBg}{HTML}{F3E8FD}
+\definecolor{bBd}{HTML}{9334E6}
+
+\begin{document}
+\begin{tikzpicture}[
+  >=Stealth,
+  node distance=1.8cm and 4cm,
+  every node/.style={font=\sffamily},
+  lbl/.style={font=\sffamily\scriptsize, text=black!60},
+  stepnum/.style={font=\sffamily\scriptsize\bfseries, circle, draw=black!40,
+    fill=black!5, minimum size=16pt, inner sep=0pt},
+]
+
+% User
+\node[draw=userBd, fill=userBg, rounded corners=6pt,
+  minimum width=2.4cm, minimum height=0.9cm, align=center, line width=0.8pt]
+  (user) {\textbf{用户}};
+
+% Session A (current session)
+\node[draw=aBd, fill=aBg, rounded corners=6pt,
+  minimum width=3.6cm, minimum height=1.4cm, align=center, line width=0.8pt,
+  below=1.8cm of user]
+  (sA) {\textbf{Session A（当前会话）}\\[-2pt]{\scriptsize aw 项目}};
+
+% Session B (external)
+\node[draw=bBd, fill=bBg, rounded corners=6pt,
+  minimum width=3.4cm, minimum height=1.4cm, align=center, line width=0.8pt,
+  right=4.5cm of sA]
+  (sB) {\textbf{Session B}\\[-2pt]{\scriptsize session-edit}};
+
+% Context labels
+\node[below=0.2cm of sA, lbl, text width=3cm, align=center, xshift=8pt] {
+  完整的 aw 项目上下文
+};
+\node[below=0.2cm of sB, lbl, text width=3cm, align=center] {
+  完整的 session-edit 上下文
+};
+
+% Step numbers
+\node[stepnum] at ([xshift=10pt, yshift=10pt]user.south east) {1};
+\node[stepnum] at ([yshift=12pt]sA.east) {2};
+\node[stepnum] at ([yshift=-12pt]sA.east) {3};
+\node[stepnum] at ([xshift=14pt, yshift=-20pt]sA.south) {4};
+
+% 1. User -> Session A
+\draw[->, line width=1pt, userBd] (user) -- node[right, lbl, xshift=2pt] {
+  \texttt{/claude 问一下 B...}
+} (sA);
+
+% 2. Session A -> Session B (ask)
+\draw[->, line width=1pt, bBd]
+  ([yshift=6pt]sA.east) -- node[above, lbl] {
+  \texttt{claude -p -{}-resume <B>}
+} ([yshift=6pt]sB.west);
+
+% 3. Session B -> Session A (return)
+\draw[->, line width=0.8pt, bBd, densely dashed]
+  ([yshift=-6pt]sB.west) -- node[below, lbl] {
+  带回结论
+} ([yshift=-6pt]sA.east);
+
+% 4. Session A continues work
+\node[draw=aBd, fill=aBg, rounded corners=4pt,
+  minimum width=3cm, minimum height=0.8cm, align=center, line width=0.6pt,
+  below=1.6cm of sA, font=\sffamily\small]
+  (work) {A 基于 B 的结论继续工作};
+
+\draw[->, line width=1pt, aBd] (sA) -- (work);
+
+\end{tikzpicture}
+\end{document}
