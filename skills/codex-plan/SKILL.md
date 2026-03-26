@@ -73,7 +73,7 @@ which codex 2>/dev/null && echo "OK" || echo "CODEX_NOT_FOUND"
 
 ```bash
 CODEX_OUT=$(mktemp /tmp/codex-out-XXXXXX)
-cat <<'CODEX_EOF' | codex exec --sandbox read-only --skip-git-repo-check --json -o "$CODEX_OUT" -
+cat <<'CODEX_EOF' | codex exec -m gpt-5.4 --sandbox read-only --skip-git-repo-check --json -o "$CODEX_OUT" -
 {上述完整提示词}
 CODEX_EOF
 echo "EXIT:$?" && cat "$CODEX_OUT" && rm -f "$CODEX_OUT"
@@ -128,7 +128,7 @@ session id: <SESSION_ID>【用于codex恢复记录，压缩时请保留】
 
 ```bash
 CODEX_OUT=$(mktemp /tmp/codex-out-XXXXXX)
-codex exec resume <SESSION_ID> --skip-git-repo-check --json -o "$CODEX_OUT" "{回应内容}" 2>&1
+codex exec resume <SESSION_ID> -m gpt-5.4 --skip-git-repo-check --json -o "$CODEX_OUT" "{回应内容}" 2>&1
 echo "EXIT:$?" && cat "$CODEX_OUT" && rm -f "$CODEX_OUT"
 ```
 

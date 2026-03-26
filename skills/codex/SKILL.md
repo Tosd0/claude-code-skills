@@ -66,7 +66,7 @@ Codex 任务:
 #### 5a. 新建会话
 ```bash
 CODEX_OUT=$(mktemp /tmp/codex-out-XXXXXX)
-cat <<'CODEX_EOF' | codex exec --sandbox read-only --skip-git-repo-check --json -o "$CODEX_OUT" -
+cat <<'CODEX_EOF' | codex exec -m gpt-5.4 --sandbox read-only --skip-git-repo-check --json -o "$CODEX_OUT" -
 {用户指令 + 上下文}
 CODEX_EOF
 echo "EXIT:$?" && cat "$CODEX_OUT" && rm -f "$CODEX_OUT"
@@ -79,7 +79,7 @@ echo "EXIT:$?" && cat "$CODEX_OUT" && rm -f "$CODEX_OUT"
 #### 5b. 恢复会话
 ```bash
 CODEX_OUT=$(mktemp /tmp/codex-out-XXXXXX)
-codex exec resume <SESSION_ID> --skip-git-repo-check --json -o "$CODEX_OUT" "{用户指令}" 2>&1
+codex exec resume <SESSION_ID> -m gpt-5.4 --skip-git-repo-check --json -o "$CODEX_OUT" "{用户指令}" 2>&1
 echo "EXIT:$?" && cat "$CODEX_OUT" && rm -f "$CODEX_OUT"
 ```
 
